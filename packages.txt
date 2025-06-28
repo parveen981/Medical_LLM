@@ -1,2 +1,4 @@
 libstdc++6
 libgcc1
+pkg-config
+cmake
