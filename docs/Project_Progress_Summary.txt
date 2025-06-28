@@ -1,0 +1,64 @@
+# 📝 Tele_Ophthalmology Project Progress Report
+
+## 🚀 Project Overview
+This project is focused on building a deep learning pipeline for Diabetic Retinopathy (DR) classification using retina images. The workflow is based on the APTOS 2019 Blindness Detection dataset.
+
+---
+
+## 📂 Folder Structure
+- `src/preprocess.py`: Preprocessing and visualization of retina images.
+- `src/train_model.py`: Full PyTorch training pipeline for DR classification.
+- `data/aptos2019-blindness-detection/`: Contains `train.csv`, `test.csv`, and all retina images.
+
+---
+
+## 🛠️ Features & Steps Completed
+
+### 1️⃣ Data Preprocessing
+- Loaded and visualized retina images with labels using OpenCV and Matplotlib.
+- Checked image loading and basic preprocessing (resize, normalization).
+
+### 2️⃣ PyTorch Dataset & DataLoader
+- Created a custom `FundusDataset` class to load images and labels from a DataFrame.
+- Used `train_test_split` to create training and validation sets (stratified by class).
+- Built separate DataLoaders for training and validation.
+
+### 3️⃣ Model Building & Training
+- Used a pretrained ResNet18 model from torchvision.
+- Modified the final layer to output 5 classes (for DR stages 0-4).
+- Defined loss (`CrossEntropyLoss`) and optimizer (`Adam`).
+- Implemented a training loop with:
+  - Real-time progress bars for both training and validation (using `tqdm`)
+  - Live printing of loss and accuracy for both train and validation sets after each epoch
+
+### 4️⃣ Checkpointing & Resume Training
+- Added automatic checkpoint saving: 💾
+  - The model is saved as `best_model_checkpoint.pth` whenever validation loss improves.
+- Added resume logic: ✅
+  - If a checkpoint exists, training resumes from the next epoch.
+  - If not, training starts fresh.
+
+### 5️⃣ User Experience
+- Progress bars show live batch/epoch progress and estimated time per batch.
+- All warnings and status messages are clearly printed.
+- Training can be safely stopped and resumed at any time without losing progress.
+
+---
+
+## 🌟 Current Capabilities
+- End-to-end DR classifier training with validation and checkpointing.
+- Robust to interruptions (safe resume).
+- Modern, readable, and modular code structure.
+
+---
+
+## 📝 Next Steps (Suggestions)
+- Add test set prediction and submission file generation.
+- Implement data augmentation for better generalization.
+- Add early stopping or learning rate scheduling.
+- Visualize training/validation loss and accuracy curves.
+
+---
+
+## 🎉 Summary
+You have a fully working, robust, and user-friendly deep learning pipeline for DR classification, with all essential features for experimentation and further development!
