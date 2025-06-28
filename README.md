@@ -1,11 +1,10 @@
 # Medical AI Assistant 🩺
 
 ## Description
-A comprehensive Medical AI Assistant application that provides AI-powered diagnosis for medical images including retina scans for diabetic retinopathy detection and chest X-ray analysis for pneumonia detection. The application features a user-friendly Streamlit interface with Grad-CAM visualizations and clinical note summarization capabilities.
+A comprehensive Medical AI Assistant application that provides AI-powered diagnosis for medical images including retina scans for diabetic retinopathy detection. The application features a user-friendly Streamlit interface with Grad-CAM visualizations and clinical note summarization capabilities.
 
 ## Features
 - 👁️ **Retina Analysis**: Diabetic retinopathy classification with 5-stage severity detection
-- 🩻 **X-Ray Diagnosis**: Chest X-ray pneumonia detection
 - 🔥 **Grad-CAM Visualization**: Visual explanations of AI decisions
 - 📋 **Clinical Note Summarization**: AI-powered text summarization using T5 model
 - 📊 **Interactive Dashboard**: Modern Streamlit web interface
@@ -34,14 +33,6 @@ Medical_AI_Assistant/
 │   │   │   └── summarizer.py   # Clinical note summarization
 │   │   ├── train_model.py      # Training pipeline
 │   │   └── test_backend.py     # Backend testing
-│   └── xray_classifier/         # X-ray analysis module
-│       ├── backend/
-│       │   ├── config.py       # X-ray specific configuration
-│       │   ├── model.py        # Model architecture
-│       │   ├── inference.py    # X-ray inference
-│       │   ├── grad_cam.py     # X-ray Grad-CAM
-│       │   └── train_model.py  # X-ray training pipeline
-│       └── test_backend.py     # X-ray backend testing
 └── pages/                      # Additional Streamlit pages (if any)
 ```
 
@@ -92,7 +83,6 @@ The application will open in your default web browser at `http://localhost:8501`
 1. **Home Page**: Overview of features and navigation
 2. **Scan & Diagnose**: Upload and analyze medical images
    - **Retina Tab**: Upload retina images for diabetic retinopathy analysis
-   - **X-Ray Tab**: Upload chest X-rays for pneumonia detection
 3. **Final Results**: View all scan results and download PDF reports
 
 ### Model Training (Optional)
@@ -103,16 +93,10 @@ To train models from scratch:
 python src/ophthalmology/train_model.py
 ```
 
-**For X-Ray Classification:**
-```bash
-python src/xray_classifier/backend/train_model.py
-```
-
 ## Technical Details
 
 ### Models Used
 - **Retina Classifier**: ResNet18 with transfer learning (5 classes for DR severity)
-- **X-Ray Classifier**: ResNet18/DenseNet121 with transfer learning (2 classes: Normal/Pneumonia)
 - **Text Summarizer**: T5-base transformer model for clinical notes
 
 ### Key Technologies
@@ -126,7 +110,6 @@ python src/xray_classifier/backend/train_model.py
 
 ### Performance Metrics
 - Retina Model Accuracy: ~95.2%
-- X-Ray Model Accuracy: ~93.1%
 - Average Processing Time: 2-5 seconds per image
 
 ## Dependencies
@@ -145,7 +128,6 @@ See `requirements.txt` for complete list. Key dependencies include:
 ## Model Checkpoints
 Pre-trained model weights are automatically downloaded when running the application for the first time. Models are stored as:
 - `best_model_checkpoint.pth` (Retina DR classifier)
-- Additional X-ray model weights (downloaded as needed)
 
 ## Contributing
 1. Fork the repository
@@ -159,7 +141,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 - APTOS 2019 Blindness Detection Dataset for retina images
-- NIH Chest X-ray Dataset for pneumonia detection
 - PyTorch and Hugging Face communities
 - Streamlit development team
 
@@ -170,7 +151,7 @@ For issues, questions, or contributions, please:
 3. Contact the development team
 
 ## Changelog
-- v1.0.0: Initial release with retina and X-ray analysis
+- v1.0.0: Initial release with retina analysis
 - v1.1.0: Added Grad-CAM visualizations
 - v1.2.0: Integrated clinical note summarization
 - v1.3.0: Added PDF report generation

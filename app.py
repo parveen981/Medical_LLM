@@ -34,7 +34,7 @@ if os.path.exists(banner_path):
 # Header & Intro
 # =============================
 st.markdown("""
-Welcome! Diagnose retina and X-ray images with AI. Upload, scan, and view results—all in one place.
+Welcome! Diagnose retina images with AI. Upload, scan, and view results—all in one place.
 """)
 
 # ==================================================
@@ -79,7 +79,6 @@ if page == "Home":
 
     ### Features:
     - 👁️ Retina Diagnosis
-    - 🩻 X-Ray Diagnosis
     - 📋 Final Results and PDF Export
 
     Use the **sidebar navigation** to access different pages.
@@ -90,126 +89,61 @@ if page == "Home":
 # ==================================================
 elif page == "Scan & Diagnose":
     # =============================
-    # Tabs for Retina & X-ray
+    # Retina Scan
     # =============================
-    tab1, tab2 = st.tabs(["🧿 Retina Scan", "🩻 X-Ray Diagnosis"])
-
-    # =============================
-    # Retina Tab
-    # =============================
-    with tab1:
-        st.subheader("Retina Diagnosis")
-        retina_file = st.file_uploader("Upload a retina image", type=["png", "jpg", "jpeg"], key="retina_upload")
-        if retina_file is not None:
-            retina_img = Image.open(retina_file).convert("RGB")
-            st.image(retina_img, caption="Uploaded Retina Image", use_container_width=True)
-            if st.button("Scan Retina", key="scan_retina"):
-                from src.ophthalmology.backend.inference import predict_image as predict_retina
-                from src.ophthalmology.backend.model_loader import load_dr_model
-                from src.ophthalmology.backend.grad_cam import generate_gradcam
-                with st.spinner("Processing retina image..."):
-                    # Save uploaded image to output/uploads/
-                    output_dir = "output"
-                    uploads_dir = os.path.join(output_dir, "uploads")
-                    os.makedirs(uploads_dir, exist_ok=True)
-                    output_image_path = os.path.join(uploads_dir, retina_file.name)
-                    retina_img.save(output_image_path)
-                    # Save temp for backend
-                    temp_dir = tempfile.gettempdir()
-                    temp_image_path = os.path.join(temp_dir, retina_file.name)
-                    retina_img.save(temp_image_path)
-                    # Load model (cache for performance)
-                    @st.cache_resource
-                    def get_retina_model():
-                        return load_dr_model("best_model_checkpoint.pth")
-                    model = get_retina_model()
-                    # Predict (simulate extra details)
-                    prediction = predict_retina(model, temp_image_path)
-                    # Simulate confidence and disease state (replace with backend if available)
-                    import random
-                    confidence = round(random.uniform(85, 99), 2)
-                    disease_state = str(prediction) if isinstance(prediction, str) else "Detected"
-                    model_accuracy = 95.2  # Example static accuracy for retina model
-                    # Grad-CAM
-                    gradcam_path = os.path.join(output_dir, "gradcam_result.png")
-                    generate_gradcam(model, temp_image_path, gradcam_path)
-                    # Show results
-                    st.success(f"Retina scan complete! Diagnosis: {prediction}")
-                    st.image(gradcam_path, caption="Grad-CAM Overlay", use_container_width=True)
-                    st.write(f"**Model Confidence:** {confidence}%")
-                    st.write(f"**Disease State:** {disease_state}")
-                    st.write(f"**Model Accuracy:** {model_accuracy}%")
-                    # Save to session_state['results']
-                    result = {
-                        "modality": "Retina",
-                        "image": output_image_path,
-                        "prediction": prediction,
-                        "gradcam": gradcam_path,
-                        "confidence": confidence,
-                        "disease_state": disease_state,
-                        "model_accuracy": model_accuracy,
-                        "timestamp": str(datetime.datetime.now())
-                    }
-                    st.session_state["results"].append(result)
-
-    # =============================
-    # X-ray Tab
-    # =============================
-    with tab2:
-        st.subheader("X-Ray Diagnosis")
-        xray_file = st.file_uploader("Upload a chest X-ray image", type=["png", "jpg", "jpeg"], key="xray_upload")
-        if xray_file is not None:
-            xray_img = Image.open(xray_file).convert("RGB")
-            st.image(xray_img, caption="Uploaded X-ray Image", use_container_width=True)
-            if st.button("Scan X-ray", key="scan_xray"):
-                from src.xray_classifier.backend.inference import predict_image as predict_xray
-                from src.xray_classifier.backend.model import load_model as load_xray_model
-                from src.xray_classifier.backend.grad_cam import generate_gradcam_for_image as generate_xray_gradcam
-                with st.spinner("Processing X-ray image..."):
-                    # Save uploaded image to output/uploads/
-                    output_dir = "output"
-                    uploads_dir = os.path.join(output_dir, "uploads")
-                    os.makedirs(uploads_dir, exist_ok=True)
-                    output_image_path = os.path.join(uploads_dir, xray_file.name)
-                    xray_img.save(output_image_path)
-                    # Save temp for backend
-                    temp_dir = tempfile.gettempdir()
-                    temp_image_path = os.path.join(temp_dir, xray_file.name)
-                    xray_img.save(temp_image_path)
-                    from src.xray_classifier.backend.config import XRayConfig
-                    checkpoint_path = XRayConfig.CHECKPOINT_PATH
-                    # Load model (cache for performance)
-                    @st.cache_resource
-                    def get_xray_model():
-                        return load_xray_model(checkpoint_path)
-                    model = get_xray_model()
-                    # Predict (simulate extra details)
-                    prediction = predict_xray(model, temp_image_path)
-                    import random
-                    confidence = round(random.uniform(80, 98), 2)
-                    disease_state = str(prediction) if isinstance(prediction, str) else "Detected"
-                    model_accuracy = 93.1  # Example static accuracy for xray model
-                    # Grad-CAM
-                    gradcam_path = os.path.join(output_dir, "xray_gradcam_result.png")
-                    generate_xray_gradcam(checkpoint_path, temp_image_path, gradcam_path)
-                    # Show results
-                    st.success(f"X-ray scan complete! Diagnosis: {prediction}")
-                    st.image(gradcam_path, caption="Grad-CAM Overlay", use_container_width=True)
-                    st.write(f"**Model Confidence:** {confidence}%")
-                    st.write(f"**Disease State:** {disease_state}")
-                    st.write(f"**Model Accuracy:** {model_accuracy}%")
-                    # Save to session_state['results']
-                    result = {
-                        "modality": "X-ray",
-                        "image": output_image_path,
-                        "prediction": prediction,
-                        "gradcam": gradcam_path,
-                        "confidence": confidence,
-                        "disease_state": disease_state,
-                        "model_accuracy": model_accuracy,
-                        "timestamp": str(datetime.datetime.now())
-                    }
-                    st.session_state["results"].append(result)
+    st.subheader("Retina Diagnosis")
+    retina_file = st.file_uploader("Upload a retina image", type=["png", "jpg", "jpeg"], key="retina_upload")
+    if retina_file is not None:
+        retina_img = Image.open(retina_file).convert("RGB")
+        st.image(retina_img, caption="Uploaded Retina Image", use_container_width=True)
+        if st.button("Scan Retina", key="scan_retina"):
+            from src.ophthalmology.backend.inference import predict_image as predict_retina
+            from src.ophthalmology.backend.model_loader import load_dr_model
+            from src.ophthalmology.backend.grad_cam import generate_gradcam
+            with st.spinner("Processing retina image..."):
+                # Save uploaded image to output/uploads/
+                output_dir = "output"
+                uploads_dir = os.path.join(output_dir, "uploads")
+                os.makedirs(uploads_dir, exist_ok=True)
+                output_image_path = os.path.join(uploads_dir, retina_file.name)
+                retina_img.save(output_image_path)
+                # Save temp for backend
+                temp_dir = tempfile.gettempdir()
+                temp_image_path = os.path.join(temp_dir, retina_file.name)
+                retina_img.save(temp_image_path)
+                # Load model (cache for performance)
+                @st.cache_resource
+                def get_retina_model():
+                    return load_dr_model("best_model_checkpoint.pth")
+                model = get_retina_model()
+                # Predict (simulate extra details)
+                prediction = predict_retina(model, temp_image_path)
+                # Simulate confidence and disease state (replace with backend if available)
+                import random
+                confidence = round(random.uniform(85, 99), 2)
+                disease_state = str(prediction) if isinstance(prediction, str) else "Detected"
+                model_accuracy = 95.2  # Example static accuracy for retina model
+                # Grad-CAM
+                gradcam_path = os.path.join(output_dir, "gradcam_result.png")
+                generate_gradcam(model, temp_image_path, gradcam_path)
+                # Show results
+                st.success(f"Retina scan complete! Diagnosis: {prediction}")
+                st.image(gradcam_path, caption="Grad-CAM Overlay", use_container_width=True)
+                st.write(f"**Model Confidence:** {confidence}%")
+                st.write(f"**Disease State:** {disease_state}")
+                st.write(f"**Model Accuracy:** {model_accuracy}%")
+                # Save to session_state['results']
+                result = {
+                    "modality": "Retina",
+                    "image": output_image_path,
+                    "prediction": prediction,
+                    "gradcam": gradcam_path,
+                    "confidence": confidence,
+                    "disease_state": disease_state,
+                    "model_accuracy": model_accuracy,
+                    "timestamp": str(datetime.datetime.now())
+                }
+                st.session_state["results"].append(result)
 
     # =============================
     # Results/History Section
