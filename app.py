@@ -69,6 +69,74 @@ def download_model_if_needed():
 # Ensure model is present before loading
 download_model_if_needed()
 
+# =============================
+# Theme Selection
+# =============================
+themes = {
+    "Sky": {
+        "primaryColor": "#0099FF",
+        "backgroundColor": "#E3F6FF",
+        "secondaryBackgroundColor": "#BEE9FF",
+        "textColor": "#003366",
+        "font": "sans serif"
+    },
+    "Emerald": {
+        "primaryColor": "#2ecc40",
+        "backgroundColor": "#e8f8f5",
+        "secondaryBackgroundColor": "#b2f7cc",
+        "textColor": "#145a32",
+        "font": "serif"
+    },
+    "Forest": {
+        "primaryColor": "#388E3C",
+        "backgroundColor": "#E8F5E9",
+        "secondaryBackgroundColor": "#A5D6A7",
+        "textColor": "#1B5E20",
+        "font": "serif"
+    },
+    "Rose": {
+        "primaryColor": "#E75480",
+        "backgroundColor": "#FFF0F5",
+        "secondaryBackgroundColor": "#FFD1DC",
+        "textColor": "#800040",
+        "font": "monospace"
+    },
+    "Sunset": {
+        "primaryColor": "#FF5733",
+        "backgroundColor": "#FFF5E6",
+        "secondaryBackgroundColor": "#FFDAB9",
+        "textColor": "#C70039",
+        "font": "cursive"
+    }
+}
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("🎨 Theme Selector")
+selected_theme = st.sidebar.selectbox("Choose a theme", list(themes.keys()))
+
+# Apply theme (Streamlit does not support dynamic theming natively, so we use custom CSS)
+theme = themes[selected_theme]
+custom_css = f"""
+<style>
+html, body, [data-testid="stAppViewContainer"] {{
+    background-color: {theme['backgroundColor']} !important;
+    color: {theme['textColor']} !important;
+    font-family: {theme['font']}, Arial, sans-serif !important;
+}}
+section[data-testid="stSidebar"] {{
+    background-color: {theme['secondaryBackgroundColor']} !important;
+}}
+.stButton>button {{
+    background-color: {theme['primaryColor']} !important;
+    color: #fff !important;
+}}
+.stMarkdown, .stText, .stHeader, .stSubheader, .stDataFrame, .stTable, .stExpander, .stAlert, .st-bb, .st-at, .st-c6, .st-cg, .st-ch, .st-ci, .st-cj, .st-ck, .st-cl, .st-cm, .st-cn, .st-co, .st-cp, .st-cq, .st-cr, .st-cs, .st-ct, .st-cu, .st-cv, .st-cw, .st-cx, .st-cy, .st-cz {{
+    color: {theme['textColor']} !important;
+}}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
 # ==================================================
 # 🏠 Home Page Content
 # ==================================================
