@@ -219,8 +219,7 @@ elif page == "Scan & Diagnose":
                 }
                 st.session_state["results"].append(result)
             st.session_state["scanning"] = False
-            st.image("https://media.giphy.com/media/111ebonMs90YLu/giphy.gif", width=100)
-            st.success("Scan complete! You can view the result in the 'Final Results' tab.")
+            st.info("🟢 Scan complete! You can view the result in the 'Final Results' tab.")
 
     # =============================
     # Results/History Section

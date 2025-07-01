@@ -1,56 +1,67 @@
 # Medical AI Assistant 🩺
 
 ## Description
-A comprehensive Medical AI Assistant application that provides AI-powered diagnosis for medical images including retina scans for diabetic retinopathy detection. The application features a user-friendly Streamlit interface with Grad-CAM visualizations and clinical note summarization capabilities.
+A modern, retina-only Medical AI Assistant app for AI-powered retina (ophthalmology) image analysis. Features a user-friendly Streamlit interface, Grad-CAM visualizations, PDF export, and robust theme and feedback support. Designed for research and educational use.
 
 ## Features
-- 👁️ **Retina Analysis**: Diabetic retinopathy classification with 5-stage severity detection
+- 👁️ **Retina Analysis Only**: Upload retina images for diabetic retinopathy detection (5-stage severity)
 - 🔥 **Grad-CAM Visualization**: Visual explanations of AI decisions
-- 📋 **Clinical Note Summarization**: AI-powered text summarization using T5 model
-- 📊 **Interactive Dashboard**: Modern Streamlit web interface
-- 📄 **PDF Report Generation**: Export results to PDF format
-- 🎯 **Real-time Processing**: Fast inference with confidence scores
+- 📄 **PDF Report Generation**: Export all results to PDF (auto-clears after download)
+- 🎨 **Multiple Themes**: Choose from 5 modern themes, with persistence and custom CSS
+- 📱 **Mobile Responsive**: Optimized for all devices
+- 🧑‍💻 **Modern UI/UX**: Sidebar navigation, About/Help info, and a stylish footer
+- 🟢 **Scan Workflow**: Button disables during scan, clear feedback with emoji, and results in a dedicated tab
+- 📝 **Session History**: All scans are saved in session and viewable in expandable history
+- 🧾 **Automatic Model Download**: Model checkpoint is auto-downloaded if missing
+- 🛡️ **Robust Error Handling**: Unicode/emoji fixes, user-friendly messages
+
+## What's New (v2.0.0)
+- Removed all X-ray code and references; retina-only
+- Refactored theme support: 5 themes, persistence, and custom CSS
+- Added About/Help info as a sidebar button
+- Improved mobile responsiveness
+- Added a footer with copyright and GitHub link
+- Scan workflow: disables button while scanning, shows feedback (emoji, info, etc.), and stores results for "Final Results" tab
+- Added multiple feedback styles (st.balloons, st.snow, st.success, st.info, emoji)
+- Fixed UnicodeEncodeError in subheader (now uses 📋)
+- PDF export now clears results after download
 
 ## Project Structure
 ```
-Medical_AI_Assistant/
-├── app.py                          # Main Streamlit application
-├── best_model_checkpoint.pth       # Pre-trained model weights (excluded from git)
-├── requirements.txt                # Python dependencies
-├── README.md                       # Project documentation
-├── docs/                          # Documentation and progress reports
-│   └── Project_Progress_Summary.txt
-├── output/                        # Generated results and visualizations
-│   ├── gradcam_result.png
-│   └── uploads/
-├── src/                          # Source code modules
-│   ├── ophthalmology/           # Retina analysis module
-│   │   ├── backend/
-│   │   │   ├── config.py       # Configuration settings
-│   │   │   ├── model_loader.py # Model loading utilities
-│   │   │   ├── inference.py    # Inference pipeline
-│   │   │   ├── grad_cam.py     # Grad-CAM implementation
-│   │   │   └── summarizer.py   # Clinical note summarization
-│   │   ├── train_model.py      # Training pipeline
-│   │   └── test_backend.py     # Backend testing
-└── pages/                      # Additional Streamlit pages (if any)
+app.py                          # Main Streamlit application
+best_model_checkpoint.pth       # Pre-trained retina model (auto-downloaded)
+requirements.txt                # Python dependencies
+README.md                       # Project documentation
+docs/                          # Documentation and progress reports
+  └── Project_Progress_Summary.txt
+output/                        # Generated results and visualizations
+  ├── gradcam_result.png
+  └── uploads/                 # Uploaded images
+src/
+  ophthalmology/               # Retina analysis module
+    backend/
+      config.py
+      model_loader.py
+      inference.py
+      grad_cam.py
+      summarizer.py
+    train_model.py
+    test_backend.py
+pages/                         # (Unused, for future expansion)
 ```
 
 ## Installation
 
 ### Prerequisites
 - Python 3.8 or higher
-- CUDA-compatible GPU (optional, for faster processing)
 - 4GB+ RAM recommended
 
 ### Setup Instructions
-
 1. **Clone the repository:**
 ```bash
 git clone https://github.com/yourusername/Medical_AI_Assistant.git
 cd Medical_AI_Assistant
 ```
-
 2. **Create a virtual environment (recommended):**
 ```bash
 python -m venv medical_ai_env
@@ -59,14 +70,9 @@ medical_ai_env\Scripts\activate
 # On Mac/Linux:
 source medical_ai_env/bin/activate
 ```
-
 3. **Install dependencies:**
 ```bash
 pip install -r requirements.txt
-```
-
-4. **Download additional requirements for Streamlit:**
-```bash
 pip install streamlit fpdf2
 ```
 
@@ -76,85 +82,46 @@ pip install streamlit fpdf2
 ```bash
 streamlit run app.py
 ```
-
-The application will open in your default web browser at `http://localhost:8501`
+The app will open in your browser at `http://localhost:8501`
 
 ### Using the Interface
-1. **Home Page**: Overview of features and navigation
-2. **Scan & Diagnose**: Upload and analyze medical images
-   - **Retina Tab**: Upload retina images for diabetic retinopathy analysis
-3. **Final Results**: View all scan results and download PDF reports
+- **Home**: Overview and navigation
+- **Scan & Diagnose**: Upload retina images, scan, and view feedback (with emoji)
+  - Scan button disables during processing
+  - Feedback shown with emoji (🟢, 🥼, 🔬, etc.)
+  - Results saved in session and shown in expandable history
+- **Final Results**: View all scan results and download a PDF report (results auto-clear after download)
+- **About/Help**: Sidebar button shows info box
 
 ### Model Training (Optional)
-To train models from scratch:
-
-**For Retina Classification:**
+To train the retina model from scratch:
 ```bash
 python src/ophthalmology/train_model.py
 ```
 
 ## Technical Details
-
-### Models Used
-- **Retina Classifier**: ResNet18 with transfer learning (5 classes for DR severity)
-- **Text Summarizer**: T5-base transformer model for clinical notes
-
-### Key Technologies
-- **PyTorch**: Deep learning framework
-- **Streamlit**: Web application framework
-- **OpenCV**: Image processing
-- **Transformers**: NLP models
-- **Grad-CAM**: Explainable AI visualizations
-- **PIL/Pillow**: Image handling
-- **NumPy/Matplotlib**: Data processing and visualization
-
-### Performance Metrics
-- Retina Model Accuracy: ~95.2%
-- Average Processing Time: 2-5 seconds per image
+- **Model**: ResNet18 (5-class DR severity)
+- **Frameworks**: PyTorch, Streamlit, OpenCV, PIL, Transformers
+- **Explainability**: Grad-CAM overlays
+- **PDF Export**: fpdf2
+- **Performance**: Retina model accuracy ~95.2%
+- **Model Download**: Auto-downloads on first run
+- **Session State**: Results/history stored in session
+- **UI/UX**: 5 themes, mobile responsive, emoji feedback, About/Help, footer
 
 ## Dependencies
-See `requirements.txt` for complete list. Key dependencies include:
-- `torch>=2.0.0`
-- `torchvision>=0.15.0`  
-- `transformers>=4.30.0`
-- `streamlit`
-- `opencv-python`
-- `Pillow`
-- `numpy`
-- `matplotlib`
-- `scikit-learn`
-- `tqdm`
+See `requirements.txt` for full list. Key packages:
+- torch, torchvision, transformers, streamlit, opencv-python, Pillow, numpy, matplotlib, scikit-learn, tqdm, fpdf2
 
-## Model Checkpoints
-Pre-trained model weights are automatically downloaded when running the application for the first time. Models are stored as:
-- `best_model_checkpoint.pth` (Retina DR classifier)
+## Troubleshooting
+- If you see Unicode errors, ensure your terminal and browser support emoji.
+- If model download fails, check your internet connection.
+- For PDF export, ensure `fpdf2` is installed.
 
-## Contributing
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-- APTOS 2019 Blindness Detection Dataset for retina images
-- PyTorch and Hugging Face communities
-- Streamlit development team
-
-## Support
-For issues, questions, or contributions, please:
-1. Check existing GitHub issues
-2. Create a new issue with detailed description
-3. Contact the development team
-
-## Changelog
-- v1.0.0: Initial release with retina analysis
-- v1.1.0: Added Grad-CAM visualizations
-- v1.2.0: Integrated clinical note summarization
-- v1.3.0: Added PDF report generation
+## License & Acknowledgments
+- MIT License
+- APTOS 2019 Blindness Detection Dataset
+- PyTorch, Hugging Face, Streamlit
 
 ---
-**Note**: This application is for educational and research purposes. Always consult with qualified medical professionals for actual medical diagnosis and treatment.
+**Disclaimer:** This tool is for research/education only. Not for clinical use.
