@@ -110,11 +110,14 @@ themes = {
     }
 }
 
-st.sidebar.markdown("---")
-st.sidebar.subheader("🎨 Theme Selector")
-selected_theme = st.sidebar.selectbox("Choose a theme", list(themes.keys()))
+# 1. Theme Persistence
+if "selected_theme" not in st.session_state:
+    st.session_state["selected_theme"] = list(themes.keys())[0]
+selected_theme = st.sidebar.selectbox("Choose a theme", list(themes.keys()),
+    index=list(themes.keys()).index(st.session_state["selected_theme"]),
+    key="theme_select")
+st.session_state["selected_theme"] = selected_theme
 
-# Apply theme (Streamlit does not support dynamic theming natively, so we use custom CSS)
 theme = themes[selected_theme]
 custom_css = f"""
 <style>
@@ -182,7 +185,11 @@ elif page == "Scan & Diagnose":
                 # Load model (cache for performance)
                 @st.cache_resource
                 def get_retina_model():
-                    return load_dr_model("best_model_checkpoint.pth")
+                    with st.spinner("Loading retina model..."):
+                        import time
+                        time.sleep(1)  # Simulate loading
+                        from src.ophthalmology.backend.model_loader import load_dr_model
+                        return load_dr_model("best_model_checkpoint.pth")
                 model = get_retina_model()
                 # Predict (simulate extra details)
                 prediction = predict_retina(model, temp_image_path)
@@ -194,12 +201,6 @@ elif page == "Scan & Diagnose":
                 # Grad-CAM
                 gradcam_path = os.path.join(output_dir, "gradcam_result.png")
                 generate_gradcam(model, temp_image_path, gradcam_path)
-                # Show results
-                st.success(f"Retina scan complete! Diagnosis: {prediction}")
-                st.image(gradcam_path, caption="Grad-CAM Overlay", use_container_width=True)
-                st.write(f"**Model Confidence:** {confidence}%")
-                st.write(f"**Disease State:** {disease_state}")
-                st.write(f"**Model Accuracy:** {model_accuracy}%")
                 # Save to session_state['results']
                 result = {
                     "modality": "Retina",
@@ -212,6 +213,7 @@ elif page == "Scan & Diagnose":
                     "timestamp": str(datetime.datetime.now())
                 }
                 st.session_state["results"].append(result)
+            st.success("Scanning successful! You can view the result in the 'Final Results' tab.")
 
     # =============================
     # Results/History Section
@@ -311,3 +313,31 @@ elif page == "Final Results":
             # Automatically clear results after download
             st.session_state["results"] = []
             st.success("Results cleared after PDF download.")
+
+# 6. About/Help Page (display as modal overlay card)
+help_content = """
+### About Medical AI Assistant
+- Upload retina images for AI-powered diagnosis.
+- Download results as PDF.
+- Choose your favorite theme.
+- For best results, use high-quality images.
+- **Disclaimer:** This tool is for research/education only. Not for clinical use.
+"""
+if "About" not in st.session_state:
+    st.session_state["About"] = False
+if st.sidebar.button("About / Help", key="about_btn_simple"):
+    st.session_state["About"] = not st.session_state["About"]
+if st.session_state["About"]:
+    st.info(help_content)
+
+# 10. Mobile Responsiveness (improve padding for mobile)
+st.markdown("""
+<style>
+@media (max-width: 600px) {
+    .stAppViewContainer, .main, .block-container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
