@@ -48,6 +48,9 @@ page = st.sidebar.radio("Go to", ["Home", "Scan & Diagnose", "Final Results"])
 # ==================================================
 if "results" not in st.session_state:
     st.session_state["results"] = []  # Structure: list of dicts
+# Add a scanning flag to session state
+if "scanning" not in st.session_state:
+    st.session_state["scanning"] = False
 
 # =============================
 # Model Download Helper
@@ -167,7 +170,9 @@ elif page == "Scan & Diagnose":
     if retina_file is not None:
         retina_img = Image.open(retina_file).convert("RGB")
         st.image(retina_img, caption="Uploaded Retina Image", use_container_width=True)
-        if st.button("Scan Retina", key="scan_retina"):
+        scan_btn = st.button("Scan Retina", key="scan_retina", disabled=st.session_state["scanning"])
+        if scan_btn:
+            st.session_state["scanning"] = True
             from src.ophthalmology.backend.inference import predict_image as predict_retina
             from src.ophthalmology.backend.model_loader import load_dr_model
             from src.ophthalmology.backend.grad_cam import generate_gradcam
@@ -213,7 +218,9 @@ elif page == "Scan & Diagnose":
                     "timestamp": str(datetime.datetime.now())
                 }
                 st.session_state["results"].append(result)
-            st.success("Scanning successful! You can view the result in the 'Final Results' tab.")
+            st.session_state["scanning"] = False
+            st.image("https://media.giphy.com/media/111ebonMs90YLu/giphy.gif", width=100)
+            st.success("Scan complete! You can view the result in the 'Final Results' tab.")
 
     # =============================
     # Results/History Section
@@ -340,4 +347,12 @@ st.markdown("""
     }
 }
 </style>
+""", unsafe_allow_html=True)
+
+# Add a simple footer
+st.markdown("""
+---
+<div style='text-align:center; color: #888; font-size: 0.95em;'>
+    Medical AI Assistant &copy; 2025 &middot; <a href='https://github.com/parveen981/Medical_LLM' target='_blank'>GitHub</a>
+</div>
 """, unsafe_allow_html=True)
