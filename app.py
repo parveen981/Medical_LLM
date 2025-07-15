@@ -55,7 +55,7 @@ if "scanning" not in st.session_state:
 # =============================
 # Model Download Helper
 # =============================
-MODEL_URL = "https://github.com/parveen981/medical-ai-assistant/releases/download/best_model_checkpoint/best_model_checkpoint.pth"
+MODEL_URL = "https://github.com/parveen981/Medical_LLM/releases/download/best_model_checkpoint/best_model_checkpoint.pth"
 MODEL_PATH = "best_model_checkpoint.pth"
 
 def download_model_if_needed():
